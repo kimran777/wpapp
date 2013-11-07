@@ -1,0 +1,17 @@
+﻿<configuration>
+    <system.serviceModel>
+        <bindings>
+            <basicHttpBinding>
+                <binding name="BasicHttpBinding_IDiscountService" maxBufferSize="2147483647"
+                    maxReceivedMessageSize="2147483647">
+                    <security mode="None" />
+                </binding>
+            </basicHttpBinding>
+        </bindings>
+        <client>
+            <endpoint address="http://wcfdiscount.apphb.com/DiscountService.svc"
+                binding="basicHttpBinding" bindingConfiguration="BasicHttpBinding_IDiscountService"
+                contract="Proxies.IDiscountService" name="BasicHttpBinding_IDiscountService" />
+        </client>
+    </system.serviceModel>
+</configuration>

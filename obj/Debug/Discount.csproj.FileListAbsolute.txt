@@ -1,0 +1,16 @@
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\App.g.cs
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\DiscountList.g.cs
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\MainPage.g.cs
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\Settings.g.cs
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\Discount.g.resources
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\Bin\Debug\ApplicationIcon.png
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\Bin\Debug\Background.png
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\Bin\Debug\Discount.dll
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\Bin\Debug\Discount.pdb
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\Bin\Debug\AppManifest.xaml
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\Bin\Debug\Discount.xap
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\Discount.dll
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\Discount.pdb
+c:\users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\XapCacheFile.xml
+C:\Users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\ProductPage.g.cs
+C:\Users\kimra_000\documents\visual studio 2012\Projects\Discount\Discount\obj\Debug\Discount.csprojResolveAssemblyReference.cache
