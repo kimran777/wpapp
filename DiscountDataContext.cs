@@ -18,5 +18,7 @@ namespace Discount
         { }
         public Table<StoresTable> Stores;
         public Table<ProductsTable> Products;
+
+        public Table<BuysTable> Buys;
     }
 }

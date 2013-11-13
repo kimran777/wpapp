@@ -16,7 +16,13 @@ namespace Discount
         [Column]
         public int storeID { get; set; }
         [Column]
+        public string storeName { get; set; }
+        [Column]
         public string productName { get; set; }
+        [Column]
+        public int productTypeID { get; set; }
+        [Column]
+        public string productType { get; set; }
         [Column]
         public int discount { get; set; }
         [Column]

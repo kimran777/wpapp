@@ -20,7 +20,7 @@ namespace Discount.Proxies {
     [System.Runtime.Serialization.DataContractAttribute(Name="CProduct", Namespace="http://schemas.datacontract.org/2004/07/WcfDiscount")]
     public partial class CProduct : object, System.ComponentModel.INotifyPropertyChanged {
         
-        private string discountField;
+        private int discountField;
         
         private string endDateField;
         
@@ -34,17 +34,23 @@ namespace Discount.Proxies {
         
         private string productNameField;
         
+        private string productsTypeField;
+        
+        private int productsTypeIDField;
+        
         private string startDateField;
         
-        private string storeIDField;
+        private int storeIDField;
+        
+        private string storeNameField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string discount {
+        public int discount {
             get {
                 return this.discountField;
             }
             set {
-                if ((object.ReferenceEquals(this.discountField, value) != true)) {
+                if ((this.discountField.Equals(value) != true)) {
                     this.discountField = value;
                     this.RaisePropertyChanged("discount");
                 }
@@ -130,6 +136,32 @@ namespace Discount.Proxies {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string productsType {
+            get {
+                return this.productsTypeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.productsTypeField, value) != true)) {
+                    this.productsTypeField = value;
+                    this.RaisePropertyChanged("productsType");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int productsTypeID {
+            get {
+                return this.productsTypeIDField;
+            }
+            set {
+                if ((this.productsTypeIDField.Equals(value) != true)) {
+                    this.productsTypeIDField = value;
+                    this.RaisePropertyChanged("productsTypeID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string startDate {
             get {
                 return this.startDateField;
@@ -143,14 +175,27 @@ namespace Discount.Proxies {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string storeID {
+        public int storeID {
             get {
                 return this.storeIDField;
             }
             set {
-                if ((object.ReferenceEquals(this.storeIDField, value) != true)) {
+                if ((this.storeIDField.Equals(value) != true)) {
                     this.storeIDField = value;
                     this.RaisePropertyChanged("storeID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string storeName {
+            get {
+                return this.storeNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.storeNameField, value) != true)) {
+                    this.storeNameField = value;
+                    this.RaisePropertyChanged("storeName");
                 }
             }
         }
@@ -170,17 +215,17 @@ namespace Discount.Proxies {
     [System.Runtime.Serialization.DataContractAttribute(Name="CStore", Namespace="http://schemas.datacontract.org/2004/07/WcfDiscount")]
     public partial class CStore : object, System.ComponentModel.INotifyPropertyChanged {
         
-        private string storeIDField;
+        private int storeIDField;
         
         private string storeNameField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string storeID {
+        public int storeID {
             get {
                 return this.storeIDField;
             }
             set {
-                if ((object.ReferenceEquals(this.storeIDField, value) != true)) {
+                if ((this.storeIDField.Equals(value) != true)) {
                     this.storeIDField = value;
                     this.RaisePropertyChanged("storeID");
                 }
@@ -215,7 +260,7 @@ namespace Discount.Proxies {
     public interface IDiscountService {
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IDiscountService/getDiscountList", ReplyAction="http://tempuri.org/IDiscountService/getDiscountListResponse")]
-        System.IAsyncResult BegingetDiscountList(string storeID, System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BegingetDiscountList(System.AsyncCallback callback, object asyncState);
         
         System.Collections.ObjectModel.ObservableCollection<Discount.Proxies.CProduct> EndgetDiscountList(System.IAsyncResult result);
         
@@ -377,8 +422,8 @@ namespace Discount.Proxies {
         public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> CloseCompleted;
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult Discount.Proxies.IDiscountService.BegingetDiscountList(string storeID, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BegingetDiscountList(storeID, callback, asyncState);
+        System.IAsyncResult Discount.Proxies.IDiscountService.BegingetDiscountList(System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BegingetDiscountList(callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -387,8 +432,7 @@ namespace Discount.Proxies {
         }
         
         private System.IAsyncResult OnBegingetDiscountList(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            string storeID = ((string)(inValues[0]));
-            return ((Discount.Proxies.IDiscountService)(this)).BegingetDiscountList(storeID, callback, asyncState);
+            return ((Discount.Proxies.IDiscountService)(this)).BegingetDiscountList(callback, asyncState);
         }
         
         private object[] OnEndgetDiscountList(System.IAsyncResult result) {
@@ -404,11 +448,11 @@ namespace Discount.Proxies {
             }
         }
         
-        public void getDiscountListAsync(string storeID) {
-            this.getDiscountListAsync(storeID, null);
+        public void getDiscountListAsync() {
+            this.getDiscountListAsync(null);
         }
         
-        public void getDiscountListAsync(string storeID, object userState) {
+        public void getDiscountListAsync(object userState) {
             if ((this.onBegingetDiscountListDelegate == null)) {
                 this.onBegingetDiscountListDelegate = new BeginOperationDelegate(this.OnBegingetDiscountList);
             }
@@ -418,8 +462,7 @@ namespace Discount.Proxies {
             if ((this.ongetDiscountListCompletedDelegate == null)) {
                 this.ongetDiscountListCompletedDelegate = new System.Threading.SendOrPostCallback(this.OngetDiscountListCompleted);
             }
-            base.InvokeAsync(this.onBegingetDiscountListDelegate, new object[] {
-                        storeID}, this.onEndgetDiscountListDelegate, this.ongetDiscountListCompletedDelegate, userState);
+            base.InvokeAsync(this.onBegingetDiscountListDelegate, null, this.onEndgetDiscountListDelegate, this.ongetDiscountListCompletedDelegate, userState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -586,9 +629,8 @@ namespace Discount.Proxies {
                     base(client) {
             }
             
-            public System.IAsyncResult BegingetDiscountList(string storeID, System.AsyncCallback callback, object asyncState) {
-                object[] _args = new object[1];
-                _args[0] = storeID;
+            public System.IAsyncResult BegingetDiscountList(System.AsyncCallback callback, object asyncState) {
+                object[] _args = new object[0];
                 System.IAsyncResult _result = base.BeginInvoke("getDiscountList", _args, callback, asyncState);
                 return _result;
             }

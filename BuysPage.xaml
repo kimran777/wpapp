@@ -1,0 +1,78 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="Discount.BuysPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:Discount"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBarIconButton 
+                IconUri="/images/dark/delete.png"
+                Text="Очистить список" x:Name="clearButton" Click="clearButton_Click"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+    <!--LayoutRoot представляет корневую сетку, где размещается все содержимое страницы-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel содержит имя приложения и заголовок страницы-->
+        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock Text="СКИДКИ СПБ" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock Text="список покупок" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        <ProgressBar  Grid.Row="1" x:Name="progress" IsIndeterminate="True" Margin="0,0,0,4" />
+        
+        <!--ContentPanel – поместите здесь дополнительное содержимое-->
+        <Grid x:Name="ContentPanel" Grid.Row="2" Margin="12,0,12,0">
+          <ListBox  x:Name="lbBuys"  HorizontalAlignment="Stretch">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <local:ItemTemplateSelector Content="{Binding}">
+                  <local:ItemTemplateSelector.ProductsTableTemplate>
+                    <DataTemplate>
+                      <Button x:Name="buttonProduct" BorderThickness="0" Background="{StaticResource PhoneAccentBrush}"
+                            Width="460" Height="194" Tag="{Binding productID}"
+                            Padding="0" Margin="0" VerticalContentAlignment="Top"
+                            HorizontalContentAlignment="Left" Click="buttonProduct_Click"
+                            Hold="buttonProduct_Hold">
+                        <toolkit:ContextMenuService.ContextMenu>
+                            <toolkit:ContextMenu>
+                                <toolkit:MenuItem Header="Удалить из списка" Click="delProduct_Click" />
+                            </toolkit:ContextMenu>
+                        </toolkit:ContextMenuService.ContextMenu>
+                        <StackPanel>
+                          <TextBlock TextWrapping="Wrap" Text="{Binding storeName}" Width="430" Height="40" Margin="5,2,5,0" Style="{StaticResource PhoneTextTitle3Style}"/>
+                          <TextBlock TextWrapping="Wrap" Text="{Binding productName}" Width="430" Height="100" Margin="5,2,5,0" Style="{StaticResource PhoneTextTitle3Style}"/>
+                          <StackPanel Orientation="Horizontal">
+                            <TextBlock TextWrapping="Wrap" Text="{Binding newPrice}" Width="200" Height="27" Margin="5,0,5,0" TextAlignment="Left" Style="{StaticResource PhoneTextSmallStyle}"/>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding endDate}" Width="200" Height="27" Margin="5,0,5,0" TextAlignment="Right" Style="{StaticResource PhoneTextSmallStyle}"/>
+                          </StackPanel>
+                        </StackPanel>
+                      </Button>
+                    </DataTemplate>
+                  </local:ItemTemplateSelector.ProductsTableTemplate>
+                </local:ItemTemplateSelector>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>
+    

@@ -8,15 +8,18 @@
   <xs:element name="ArrayOfCProduct" nillable="true" type="tns:ArrayOfCProduct" />
   <xs:complexType name="CProduct">
     <xs:sequence>
-      <xs:element minOccurs="0" name="discount" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="discount" type="xs:int" />
       <xs:element minOccurs="0" name="endDate" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="imageURL" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="newPrice" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="oldPrice" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="productID" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="productName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="productsType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="productsTypeID" type="xs:int" />
       <xs:element minOccurs="0" name="startDate" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="storeID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="storeID" type="xs:int" />
+      <xs:element minOccurs="0" name="storeName" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CProduct" nillable="true" type="tns:CProduct" />
@@ -28,7 +31,7 @@
   <xs:element name="ArrayOfCStore" nillable="true" type="tns:ArrayOfCStore" />
   <xs:complexType name="CStore">
     <xs:sequence>
-      <xs:element minOccurs="0" name="storeID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="storeID" type="xs:int" />
       <xs:element minOccurs="0" name="storeName" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>

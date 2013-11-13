@@ -11,14 +11,16 @@ using Microsoft.Phone.Shell;
 using System.IO.IsolatedStorage;
 using System.ServiceModel;
 using Discount.Proxies;
+using System.Windows.Media;
 
 namespace Discount
 {
     public partial class DiscountList : PhoneApplicationPage
     {
+        Color currentAccentColorHex = (Color)Application.Current.Resources["PhoneAccentColor"];
 
-        public System.Collections.ObjectModel.ObservableCollection<ProductsTable> products = new System.Collections.ObjectModel.ObservableCollection<ProductsTable>();
-
+        public List<ProductsTable> products = new List<ProductsTable>();
+        string productID;
         public DiscountList()
         {
             InitializeComponent();
@@ -27,63 +29,88 @@ namespace Discount
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            DiscountDataContext db = new DiscountDataContext();
-            var lProducts = from c in db.Products where c.storeID == Convert.ToInt32(storeID) select c;
-            foreach (var prod_i in lProducts)
+            using (var db = new DiscountDataContext())
             {
-                products.Add(prod_i);
-            }
-            lbProducts.ItemsSource = products;
+                var lProducts = from c in db.Products
+                                where c.storeID == storeID
+                                orderby c.productTypeID
+                                select c;
+                products = lProducts.ToList();
 
-            progress.Visibility = System.Windows.Visibility.Collapsed;
+                bindingProductData();
+            }
+
         }
 
         private void InitializeSettings()
         {
-            var settings = IsolatedStorageSettings.ApplicationSettings;
-            if(settings.Contains("isDownloadImage"))
-            {
-                isDownloadImage = (bool)settings["isDownloadImage"];
-            }
-            else
-            {
-                isDownloadImage = false;
-            }
         }
 
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            lbProducts.SelectedIndex = -1;
             string storeID_;
             NavigationContext.QueryString.TryGetValue("id", out storeID_);
-            if (!string.IsNullOrEmpty(storeID_))
+            using (DiscountDataContext db = new DiscountDataContext())
             {
-                storeID = storeID_;
-                DiscountDataContext db = new DiscountDataContext();
-                var storeName_ = from c in db.Stores where c.storeID == Convert.ToInt32(storeID) select c;
-                storeName = storeName_.First().storeName;
-                tbStoreName.Text = storeName;
-            }
-            else
-            {
-                MessageBox.Show("Ошибка перехода на страницу: " + storeTitle.Text);
-                storeTitle.Text = "ошибка";
-            }
-        }
-        private void lbProducts_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (lbProducts.SelectedIndex >= 0)
-            {
-                ListBox lb = sender as ListBox;
-                ProductsTable pr = lb.SelectedItem as ProductsTable;
-                NavigationService.Navigate(new Uri(string.Format("/ProductPage.xaml?idParam={0}&storeNameParam={1}", pr.productID, tbStoreName.Text), UriKind.RelativeOrAbsolute));
+                if (!string.IsNullOrEmpty(storeID_))
+                {
+                    storeID = Convert.ToInt32(storeID_);
+                    var storeName_ = from c in db.Stores where c.storeID == storeID select c;
+                    storeName = storeName_.First().storeName;
+                    tbStoreName.Text = storeName;
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка перехода на страницу: " + storeTitle.Text);
+                    storeTitle.Text = "ошибка";
+                }
+                var settings = IsolatedStorageSettings.ApplicationSettings;
             }
         }
 
+        private void bindingProductData()
+        {
+            lbProducts.ItemsSource = products;
+            progress.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
         private string storeName { get; set; }
-        private string storeID { get; set; }
+        private int storeID { get; set; }
         private bool isDownloadImage { get; set; }
+
+
+        private void buttonProduct_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            string id = button.Tag.ToString();
+            NavigationService.Navigate(new Uri(string.Format("/ProductPage.xaml?id={0}", id), UriKind.RelativeOrAbsolute));
+        }
+
+        private void addProduct_Click(object sender, RoutedEventArgs e)
+        {
+            using (var db = new DiscountDataContext())
+            {
+                var res = from c in db.Buys
+                          where c.productID == productID
+                          select c;
+                if (res.Count() == 0)
+                {
+                    BuysTable buy = new BuysTable();
+                    buy.productID = productID;
+                    db.Buys.InsertOnSubmit(buy);
+                    db.SubmitChanges();
+                }
+            }
+        }
+
+        private void btnProduct_Hold(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            var button = sender as Button;
+            SolidColorBrush brush = new SolidColorBrush(currentAccentColorHex);
+            button.Background = brush;
+            productID = button.Tag.ToString();
+        }
     }
 }

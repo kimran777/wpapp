@@ -12,12 +12,20 @@ using Microsoft.Phone.Shell;
 using System.Net.NetworkInformation;
 using System.IO.IsolatedStorage;
 using System.Diagnostics;
+using System.Data.Linq;
+using System.Threading;
 
 namespace Discount
 {
     public partial class ProductPage : PhoneApplicationPage
     {
-        Color currentAccentColorHex = (Color)Application.Current.Resources["PhoneAccentColor"];
+
+        private bool isDownloadImage;
+        private string productID;
+        private ProductsTable product;
+        private string storeName;
+        private string nameFile;
+
         public ProductPage()
         {
             InitializeComponent();
@@ -27,45 +35,38 @@ namespace Discount
         {
             base.OnNavigatedTo(e);
             string productID_;
-            string storeName_;
-            NavigationContext.QueryString.TryGetValue("idParam", out productID_);
-            NavigationContext.QueryString.TryGetValue("storeNameParam", out storeName_);
-            if (!string.IsNullOrEmpty(productID_) && !string.IsNullOrEmpty(storeName_))
+            NavigationContext.QueryString.TryGetValue("id", out productID_);
+            if (!string.IsNullOrEmpty(productID_) )
             {
-                productID = Convert.ToInt32(productID_);
-                storeName = storeName_;
-                tbStoreName.Text = storeName;
-                tbID.Text = productID.ToString();
+                productID = productID_;
+                tbID.Text = productID;
                 DiscountDataContext db = new DiscountDataContext();
-                var lProduct = from c in db.Products where c.productID == productID.ToString() select c;
+                var lProduct = from c in db.Products where c.productID == productID select c;
                 foreach (var prod_i in lProduct)
                 {
                     product = prod_i;
                 }
-                nameFolder = product.productID.Remove(2);
-                nameFile = product.productID.Remove(0, 2);
+                storeName = product.storeName;
+                tbStoreName.Text = storeName;
+
+                nameFile = product.productID;
 
                 InitializeSettings();
 
-                tbProductName.Text = product.productName;
-                tbOldPrice.Text = product.oldPrice;
-                tbNewPrice.Text = product.newPrice;
-                tbDiscount.Text = product.discount.ToString();
+                tbProductName.Text += product.productName;
+                tbOldPrice.Text = product.oldPrice + " р.";
+                tbNewPrice.Text = product.newPrice + " р.";
+                tbDiscount.Text = product.discount.ToString() + "%";
 
                 tbStartDate.Text = product.startDate;
                 tbEndDate.Text = product.endDate;
 
-                SolidColorBrush brush = new SolidColorBrush(currentAccentColorHex);
-                tbNewPrice.Foreground = brush;
-                tbEndDate.Foreground = brush;
-                
                 //lbProduct.ItemsSource = product;
             }
         }
 
         private void InitializeSettings()
         {
-
             var settings = IsolatedStorageSettings.ApplicationSettings;
             if (settings.Contains("isDownloadImage"))
             {
@@ -88,16 +89,13 @@ namespace Discount
                 else
                     loadDefaultImage();
             }
-
-
-
         }
         private bool isFileExistsInIsoStore()
         {
             var fileStorage = IsolatedStorageFile.GetUserStoreForApplication();
-            if(fileStorage.FileExists(string.Format("{0}\\{1}.jpg",nameFolder, nameFile)))
+            if (fileStorage.FileExists(string.Format("Shared\\Media\\Pictures\\{0}.jpg", nameFile)))
             {
-                Debug.WriteLine(string.Format("{0}\\{1}.jpg", nameFolder, nameFile));
+                Debug.WriteLine(string.Format("Shared\\Media\\Pictures\\{0}.jpg", nameFile));
                 return true;
             }
             else
@@ -107,10 +105,10 @@ namespace Discount
         {
             var bmp = new BitmapImage();
             var fileStorage = IsolatedStorageFile.GetUserStoreForApplication();
-            Debug.WriteLine(string.Format("{0}\\{1}.jpg", nameFolder, nameFile));
-            if( fileStorage.FileExists( string.Format("{0}\\{1}.jpg",nameFolder, nameFile) ) )
+            Debug.WriteLine(string.Format("{0}.jpg", nameFile));
+            if (fileStorage.FileExists( string.Format("Shared\\Media\\Pictures\\{0}.jpg", nameFile) ))
             {
-                using (var fstream = fileStorage.OpenFile(string.Format("{0}\\{1}.jpg",nameFolder, nameFile),System.IO.FileMode.Open))
+                using (var fstream = fileStorage.OpenFile(string.Format("Shared\\Media\\Pictures\\{0}.jpg", nameFile), System.IO.FileMode.Open))
                 {
                     bmp.SetSource(fstream);
                     imgProductImage.Source = bmp;
@@ -130,11 +128,11 @@ namespace Discount
                 {
                     var sourceImage = new BitmapImage();
                     sourceImage.SetSource(args.Result);
-                    if (!isolatedStorage.DirectoryExists(nameFolder))
+                    if (!isolatedStorage.DirectoryExists("Shared\\Media\\Pictures"))
                     {
-                        isolatedStorage.CreateDirectory(nameFolder);
+                        isolatedStorage.CreateDirectory("Shared\\Media\\Pictures");
                     }
-                    using (var fileStream = new IsolatedStorageFileStream(string.Format("{0}\\{1}.jpg", nameFolder, nameFile), System.IO.FileMode.Create, isolatedStorage))
+                    using (var fileStream = new IsolatedStorageFileStream(string.Format("Shared\\Media\\Pictures\\{0}.jpg", nameFile), System.IO.FileMode.Create, isolatedStorage))
                     {
                         var bitmap = new WriteableBitmap(sourceImage);
                         bitmap.SaveJpeg(fileStream, sourceImage.PixelWidth, sourceImage.PixelHeight, 0, 100);
@@ -151,12 +149,53 @@ namespace Discount
             imgProductImage.Source = bitmap;
         }
 
-        private bool isDownloadImage;
-        private int productID;
-        private ProductsTable product;
-        private string storeName;
-        private string nameFolder;
-        private string nameFile;
 
+
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            saveBuy();
+        }
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            saveBuy();
+        }
+        private void saveBuy()
+        {
+            using (var db = new DiscountDataContext())
+            {
+                var res = from c in db.Buys
+                          where c.productID == productID
+                          select c;
+                if (res.Count() == 0)
+                {
+                    BuysTable buy = new BuysTable();
+                    buy.productID = productID;
+                    db.Buys.InsertOnSubmit(buy);
+                    db.SubmitChanges();
+                    popupMsgText.Text = "Добавлено";
+                    showPopup();
+                }
+                else
+                {
+                    popupMsgText.Text = "Уже есть в списке покупок";
+                    showPopup();
+                }
+            }
+        }
+        private void showPopup()
+        {
+            popupMsg.IsOpen = true;
+            var dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += closePopup;
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 5);
+            dispatcherTimer.Start();
+        }
+        private void closePopup(object sender, EventArgs e)
+        {
+            popupMsg.IsOpen = false;
+            var dispatcherTimer = sender as System.Windows.Threading.DispatcherTimer;
+            dispatcherTimer.Stop();
+        }
     }
 }

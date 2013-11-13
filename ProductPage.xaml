@@ -13,6 +13,13 @@
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBarIconButton 
+                IconUri="/images/dark/add.png"
+                Text="Настройки" x:Name="addButton" Click="addButton_Click"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
 
     <!--LayoutRoot представляет корневую сетку, где размещается все содержимое страницы-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -21,9 +28,18 @@
             <RowDefinition Height="147*"/>
             <RowDefinition Height="85*"/>
         </Grid.RowDefinitions>
-
+        <Popup Width="480" x:Name="popupMsg" Margin="0,0,0,48">
+            <StackPanel Background="{StaticResource PhoneAccentBrush}" Width="480">
+                <TextBlock x:Name="popupMsgText"
+                        Width="480" Height="50" 
+                        Text="всплывающее сообщение" 
+                        TextAlignment="Center"
+                        Style="{StaticResource PhoneTextTitle3Style}"
+                         />
+            </StackPanel>
+        </Popup>
         <!--TitlePanel содержит имя приложения и заголовок страницы-->
-        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+        <StackPanel Grid.Row="0" Margin="0,17,0,28">
             <TextBlock Text="СКИДКИ СПБ" Style="{StaticResource PhoneTextNormalStyle}"/>
             <TextBlock x:Name="tbStoreName" Text="temp" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
             <TextBlock x:Name="tbID" Text="temp" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle2Style}"/>
@@ -34,7 +50,7 @@
             <ScrollViewer>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="150"/>
+                        <RowDefinition Height="213"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="50"/>
@@ -43,34 +59,28 @@
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="213"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Image x:Name="imgProductImage" Grid.Row="0" Grid.ColumnSpan="2" Width="150" Height="150"  />
-                    <TextBlock Text="подробности: " Grid.Row="1" Grid.ColumnSpan="2"  TextWrapping="Wrap" x:Name="tbProductName" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Старая цена:</TextBlock>
-                    <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Новая цена:</TextBlock>
-                    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Скидка:</TextBlock>
-                    <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Дата начала акции:</TextBlock>
-                    <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center">Дата окончания акции:</TextBlock>
-
-                    <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Text="23.523" TextWrapping="Wrap" x:Name="tbOldPrice"/>
-                    <TextBlock Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Text="23.2342" TextWrapping="Wrap" x:Name="tbNewPrice"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Text="23.2342" TextWrapping="Wrap" x:Name="tbDiscount"/>
-                    <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Text="23.52.5754" TextWrapping="Wrap" x:Name="tbStartDate"/>
-                    <TextBlock Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Text="35.55.4564" TextWrapping="Wrap" x:Name="tbEndDate"/>
+                    <Image x:Name="imgProductImage" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"  Grid.Column="0" Width="187" Height="187"  />
+                    <TextBlock Text="Подробности: " Grid.Row="1" Grid.ColumnSpan="2"  TextWrapping="Wrap" x:Name="tbProductName" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Height="27" Margin="0,12,0,11">Старая цена:</TextBlock>
+                    <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Height="27" Margin="0,12,0,11">Новая цена:</TextBlock>
+                    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Height="27" Margin="0,12,0,11">Скидка, %:</TextBlock>
+                    <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Height="27" Margin="0,12,0,11">Дата начала акции:</TextBlock>
+                    <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Height="27" Margin="0,12,0,11">Дата окончания акции:</TextBlock>
+                    <Button x:Name="btnAdd" Grid.Row="0" Grid.Column="1" 
+                            Content="Добавить" VerticalAlignment="Bottom"
+                            BorderThickness="0" Height="213" Width="213" 
+                            Margin="0,0,10,0" Background="{StaticResource PhoneAccentBrush}"
+                            Click="btnAdd_Click"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Text="Старая цена" TextWrapping="Wrap" x:Name="tbOldPrice" Height="27" Margin="10,12,0,11"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Text="Новая цена" Foreground="{StaticResource PhoneAccentBrush}" TextWrapping="Wrap" x:Name="tbNewPrice" Height="27" Margin="10,12,0,11"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Text="Скидка" TextWrapping="Wrap" x:Name="tbDiscount" Height="27" Margin="10,12,0,11"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Text="Дата начала акции" TextWrapping="Wrap" x:Name="tbStartDate" Height="27" Margin="10,12,0,11"/>
+                    <TextBlock Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Text="Дата окончания акции" Foreground="{StaticResource PhoneAccentBrush}" TextWrapping="Wrap" x:Name="tbEndDate" Height="27" Margin="10,12,0,11"/>
                 </Grid>
             </ScrollViewer>
         </Grid>
-
     </Grid>
-    <!--
-    <StackPanel>
-        <TextBlock Text="продукт" TextWrapping="Wrap" x:Name="productName" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-        <TextBlock Text="старая цена: 23.523" TextWrapping="Wrap" x:Name="oldPrice" FontSize="{StaticResource PhoneFontSizeMedium}" />
-        <TextBlock Text="новая цена: 23.2342" TextWrapping="Wrap" x:Name="newPrice" FontSize="{StaticResource PhoneFontSizeMediumLarge}" />
-        <TextBlock Text="Дата начала акции: " TextWrapping="Wrap" x:Name="startDate" FontSize="{StaticResource PhoneFontSizeMediumLarge}" />
-        <TextBlock Text="Дата начала акции: " TextWrapping="Wrap" x:Name="endDate" FontSize="{StaticResource PhoneFontSizeMediumLarge}" />
-    </StackPanel>
-    -->
 </phone:PhoneApplicationPage>
